@@ -23,7 +23,7 @@ namespace Func_Tc3
 
                 driver.Manage().Window.Maximize();
                 driver.Url = "https://vaalikone.yle.fi/eduskuntavaali2019";
-            }
+            } else { }
         }
 
         [Test, Order(1)]
@@ -31,11 +31,13 @@ namespace Func_Tc3
         {
             driver.FindElement(By.XPath("/html/body/div/main/div[1]/img"));
         }
+
         [Test, Order(2)]
         public void HaetaanHakuKenttaJaKlikataanSita()
         {
             driver.FindElement(By.XPath("/html/body/div/main/div[1]/section/div[2]/input")).Click();
         }
+
         [Test, Order(3)]
         public void LasketaanDropdownValikonKohteidenMaaraJaVerrataanKuntienMaaraan()
         {
@@ -45,9 +47,22 @@ namespace Func_Tc3
             // Act
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+
+            // Luodaan webelementeille lista johon kunnat tallennetaan
             IList<IWebElement> kunnat;
             kunnat = driver.FindElement(By.CssSelector("#root > main > div.welcomepage__Container-sc-1rp6p64-1.dezjZV > section > div.searchinput__SearchInput-h3ib9i-1.iSGaFM > div")).FindElements(By.XPath("//a"));
-           // kunnat = kunnat.Where(row => !row.Text.ToString().Contains("")).ToList();
+            
+            // Tallennetaan kunnat luettavaan muotoon "kaikkikunnat" taulukkoon.
+            string[] kaikkikunnat = new string[kunnat.Count];
+            int i = 0;
+            foreach (IWebElement element in kunnat)
+            {
+                kaikkikunnat[i++] = element.Text;
+            }
+            for (int k = 0; k < kaikkikunnat.Length; k++)
+            {
+                Console.WriteLine(kaikkikunnat[k]);
+            }
 
             int vaalikonekuntienmaara = kunnat.Count;
             vaalikonekuntienmaara = vaalikonekuntienmaara - 5; // Sivulla on viisi linkkiä "Tietosuojalauseke", "Etusivulle", "Eduskuntavaalit" -kuva, sekä "yle" -kuva jotka ovat a tagin alla ja lukeutuvat listaan.
